@@ -25,10 +25,13 @@ import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import io.modelcontextprotocol.spec.McpSchema.ToolGroup;
+import io.modelcontextprotocol.spec.McpSchema.ToolGroupName;
 import io.modelcontextprotocol.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springaicommunity.mcp.annotation.McpTool;
+import org.springaicommunity.mcp.annotation.McpToolGroup;
 import org.springaicommunity.mcp.method.tool.ReturnMode;
 import org.springaicommunity.mcp.method.tool.SyncMcpToolMethodCallback;
 import org.springaicommunity.mcp.method.tool.utils.ClassUtils;
@@ -117,6 +120,9 @@ public class SyncMcpToolProvider extends AbstractMcpToolProvider {
 						toolBuilder.outputSchema(this.getJsonMapper(),
 								JsonSchemaGenerator.generateFromType(mcpToolMethod.getGenericReturnType()));
 					}
+
+					// ToolGroup handling
+					toolBuilder.group(doGetToolGroup(toolObject.getClass()));
 
 					var tool = toolBuilder.build();
 

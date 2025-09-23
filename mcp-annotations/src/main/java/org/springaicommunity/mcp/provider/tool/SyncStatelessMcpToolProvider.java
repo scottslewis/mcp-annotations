@@ -124,6 +124,9 @@ public class SyncStatelessMcpToolProvider extends AbstractMcpToolProvider {
 								JsonSchemaGenerator.generateFromType(mcpToolMethod.getGenericReturnType()));
 					}
 
+					// ToolGroup handling
+					toolBuilder.group(doGetToolGroup(toolObject.getClass()));
+
 					var tool = toolBuilder.build();
 
 					boolean useStructuredOtput = tool.outputSchema() != null;

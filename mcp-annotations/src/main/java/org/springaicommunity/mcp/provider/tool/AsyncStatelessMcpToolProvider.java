@@ -129,6 +129,10 @@ public class AsyncStatelessMcpToolProvider extends AbstractMcpToolProvider {
 							}
 						});
 					}
+
+					// ToolGroup handling
+					toolBuilder.group(doGetToolGroup(toolObject.getClass()));
+
 					var tool = toolBuilder.build();
 
 					ReturnMode returnMode = tool.outputSchema() != null ? ReturnMode.STRUCTURED
