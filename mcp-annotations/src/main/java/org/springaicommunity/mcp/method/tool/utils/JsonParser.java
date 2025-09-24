@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+//import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.modelcontextprotocol.util.Assert;
 
@@ -38,7 +38,6 @@ public final class JsonParser {
 		.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-		.addModule(new JavaTimeModule())
 		.build();
 
 	private JsonParser() {
