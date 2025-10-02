@@ -20,14 +20,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
-import io.modelcontextprotocol.server.McpSyncServerExchange;
-import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
-import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.ToolGroup;
-import io.modelcontextprotocol.spec.McpSchema.ToolGroupName;
-import io.modelcontextprotocol.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springaicommunity.mcp.annotation.McpTool;
@@ -37,6 +29,13 @@ import org.springaicommunity.mcp.method.tool.SyncMcpToolMethodCallback;
 import org.springaicommunity.mcp.method.tool.utils.ClassUtils;
 import org.springaicommunity.mcp.method.tool.utils.JsonSchemaGenerator;
 import org.springaicommunity.mcp.provider.ProvidrerUtils;
+
+import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
+import io.modelcontextprotocol.server.McpSyncServerExchange;
+import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
+import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import io.modelcontextprotocol.util.Utils;
 
 /**
  * @author Christian Tzolov
@@ -122,7 +121,11 @@ public class SyncMcpToolProvider extends AbstractMcpToolProvider {
 					}
 
 					// ToolGroup handling
-					toolBuilder.group(doGetToolGroup(toolObject.getClass()));
+					Class<?> clazz = toolObject.getClass();
+					McpToolGroup toolGroupAnnotation = doGetMcpToolGroupAnnotation(clazz);
+					if (toolGroupAnnotation != null) {
+						toolBuilder.group(doGetToolGroup(toolGroupAnnotation, toolObject.getClass()));
+					}
 
 					var tool = toolBuilder.build();
 

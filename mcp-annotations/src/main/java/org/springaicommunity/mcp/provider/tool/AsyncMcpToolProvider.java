@@ -29,6 +29,7 @@ import io.modelcontextprotocol.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springaicommunity.mcp.annotation.McpTool;
+import org.springaicommunity.mcp.annotation.McpToolGroup;
 import org.springaicommunity.mcp.method.tool.AsyncMcpToolMethodCallback;
 import org.springaicommunity.mcp.method.tool.ReactiveUtils;
 import org.springaicommunity.mcp.method.tool.ReturnMode;
@@ -126,8 +127,12 @@ public class AsyncMcpToolProvider extends AbstractMcpToolProvider {
 					}
 
 					// ToolGroup handling
-					toolBuilder.group(doGetToolGroup(toolObject.getClass()));
-
+					Class<?> clazz = toolObject.getClass();
+					McpToolGroup toolGroupAnnotation = doGetMcpToolGroupAnnotation(clazz);
+					if (toolGroupAnnotation != null) {
+						toolBuilder.group(doGetToolGroup(toolGroupAnnotation, toolObject.getClass()));
+					}
+					
 					var tool = toolBuilder.build();
 
 					ReturnMode returnMode = tool.outputSchema() != null ? ReturnMode.STRUCTURED

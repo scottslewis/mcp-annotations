@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.spec.McpSchema.ToolGroup;
-import io.modelcontextprotocol.spec.McpSchema.ToolGroupName;
 import io.modelcontextprotocol.util.Assert;
 import io.modelcontextprotocol.util.Utils;
 
@@ -35,25 +34,27 @@ public abstract class AbstractMcpToolProvider {
 		return clazz.getAnnotation(McpToolGroup.class);
 	}
 
-	protected ToolGroupName doGetToolGroupName(McpToolGroup annotation, Class<?> clazz) {
+
+	protected ToolGroup doGetToolGroup(McpToolGroup annotation, Class<?> clazz) {
 		// annotation name has highest priority
 		String name = annotation.name();
 		if (!Utils.hasText(name)) {
 			// If none is specified in the annotation, use fully qualified type name
 			name = clazz.getName();
 		}
-		return ToolGroupName.parseName(name);
-	}
-
-	protected ToolGroup doGetToolGroup(Class<?> toolGroupClass) {
-		McpToolGroup toolGroupAnnotation = doGetMcpToolGroupAnnotation(toolGroupClass);
-		if (toolGroupAnnotation != null) {
-			return new ToolGroup(doGetToolGroupName(toolGroupAnnotation, toolGroupClass), toolGroupAnnotation.title(),
-					toolGroupAnnotation.description());
+		String[] segments = name.split("\\.");
+		ToolGroup parent = null;
+		for (int i = 0; i < segments.length; i++) {
+			if (i == (segments.length - 1)) {
+				String description = annotation.description();
+				String title = annotation.title();
+				parent = new ToolGroup(segments[i], parent, Utils.hasText(description)?description:null, Utils.hasText(title)?title:null, null);
+			}
+			else {
+				parent = new ToolGroup(segments[i], null, null, null, null);
+			}
 		}
-		else {
-			return null;
-		}
+		return parent;
 	}
 
 	protected Class<? extends Throwable> doGetToolCallException() {

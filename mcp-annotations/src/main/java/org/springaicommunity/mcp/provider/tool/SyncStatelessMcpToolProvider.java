@@ -20,21 +20,22 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import io.modelcontextprotocol.common.McpTransportContext;
-import io.modelcontextprotocol.json.McpJsonMapper;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncToolSpecification;
-import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
-import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springaicommunity.mcp.annotation.McpTool;
+import org.springaicommunity.mcp.annotation.McpToolGroup;
 import org.springaicommunity.mcp.method.tool.ReturnMode;
 import org.springaicommunity.mcp.method.tool.SyncStatelessMcpToolMethodCallback;
 import org.springaicommunity.mcp.method.tool.utils.ClassUtils;
 import org.springaicommunity.mcp.method.tool.utils.JsonSchemaGenerator;
 import org.springaicommunity.mcp.provider.ProvidrerUtils;
+
+import io.modelcontextprotocol.common.McpTransportContext;
+import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncToolSpecification;
+import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
+import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import io.modelcontextprotocol.util.Utils;
 
 /**
  * Provider for synchronous stateless MCP tool methods.
@@ -125,7 +126,11 @@ public class SyncStatelessMcpToolProvider extends AbstractMcpToolProvider {
 					}
 
 					// ToolGroup handling
-					toolBuilder.group(doGetToolGroup(toolObject.getClass()));
+					Class<?> clazz = toolObject.getClass();
+					McpToolGroup toolGroupAnnotation = doGetMcpToolGroupAnnotation(clazz);
+					if (toolGroupAnnotation != null) {
+						toolBuilder.group(doGetToolGroup(toolGroupAnnotation, toolObject.getClass()));
+					}
 
 					var tool = toolBuilder.build();
 
