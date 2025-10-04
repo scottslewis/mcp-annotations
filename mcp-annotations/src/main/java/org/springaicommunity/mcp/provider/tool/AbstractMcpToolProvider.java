@@ -34,7 +34,6 @@ public abstract class AbstractMcpToolProvider {
 		return clazz.getAnnotation(McpToolGroup.class);
 	}
 
-
 	protected ToolGroup doGetToolGroup(McpToolGroup annotation, Class<?> clazz) {
 		// annotation name has highest priority
 		String name = annotation.name();
@@ -42,19 +41,11 @@ public abstract class AbstractMcpToolProvider {
 			// If none is specified in the annotation, use fully qualified type name
 			name = clazz.getName();
 		}
-		String[] segments = name.split("\\.");
-		ToolGroup parent = null;
-		for (int i = 0; i < segments.length; i++) {
-			if (i == (segments.length - 1)) {
-				String description = annotation.description();
-				String title = annotation.title();
-				parent = new ToolGroup(segments[i], parent, Utils.hasText(description)?description:null, Utils.hasText(title)?title:null, null);
-			}
-			else {
-				parent = new ToolGroup(segments[i], null, null, null, null);
-			}
-		}
-		return parent;
+		String description = annotation.description();
+		String title = annotation.title();
+
+		return new ToolGroup(name, null, Utils.hasText(description) ? description : null,
+			Utils.hasText(title) ? title : null, null);
 	}
 
 	protected Class<? extends Throwable> doGetToolCallException() {
