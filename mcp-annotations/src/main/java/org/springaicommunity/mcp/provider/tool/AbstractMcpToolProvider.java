@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
-import io.modelcontextprotocol.spec.McpSchema.ToolGroup;
+import io.modelcontextprotocol.spec.McpSchema.Group;
 import io.modelcontextprotocol.util.Assert;
 import io.modelcontextprotocol.util.Utils;
 
@@ -34,7 +34,7 @@ public abstract class AbstractMcpToolProvider {
 		return clazz.getAnnotation(McpToolGroup.class);
 	}
 
-	protected ToolGroup doGetToolGroup(McpToolGroup annotation, Class<?> clazz) {
+	protected Group doGetToolGroup(McpToolGroup annotation, Class<?> clazz) {
 		// annotation name has highest priority
 		String name = annotation.name();
 		if (!Utils.hasText(name)) {
@@ -44,8 +44,8 @@ public abstract class AbstractMcpToolProvider {
 		String description = annotation.description();
 		String title = annotation.title();
 
-		return new ToolGroup(name, null, Utils.hasText(description) ? description : null,
-			Utils.hasText(title) ? title : null, null);
+		return new Group(name, null, Utils.hasText(description) ? description : null,
+				Utils.hasText(title) ? title : null, null);
 	}
 
 	protected Class<? extends Throwable> doGetToolCallException() {

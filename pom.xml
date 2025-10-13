@@ -56,7 +56,7 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 
-		<mcp.java.sdk.version>0.14.0-SNAPSHOT</mcp.java.sdk.version>
+		<mcp.java.sdk.version>0.15.1-SNAPSHOT</mcp.java.sdk.version>
 
 		<jsonschema.version>4.38.0</jsonschema.version>
 		<swagger-annotations.version>2.2.36</swagger-annotations.version>
@@ -119,11 +119,11 @@
 								Bundle-Name:            Bundle ${project.groupId} : ${project.artifactId}
 								version:                ${versionmask;===;${version_cleanup;${project.version}}}
 								Bundle-SymbolicName:    ${project.groupId}.${project.artifactId}
-								Bundle-Version:         ${version}
+								Bundle-Version:         ${project.version}
 								Automatic-Module-Name:  ${project.groupId}.${project.artifactId}
 								Import-Package:         jakarta.*;resolution:=optional, \
 								                        *;
-								Export-Package:         org.springaicommunity.mcp.*;version="${version}";-noimport:=true
+								Export-Package:         org.springaicommunity.mcp.*;version="${project.version}";-noimport:=true
 								-noimportjava:          true;
 								-nouses:                true;
 								-removeheaders:         Private-Package

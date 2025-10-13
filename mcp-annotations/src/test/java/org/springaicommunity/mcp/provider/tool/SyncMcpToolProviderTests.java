@@ -26,7 +26,9 @@ import java.util.function.BiFunction;
 
 import org.junit.jupiter.api.Test;
 import org.springaicommunity.mcp.annotation.McpTool;
+import org.springaicommunity.mcp.annotation.McpToolGroup;
 
+import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -34,6 +36,7 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import io.modelcontextprotocol.spec.McpSchema.ToolAnnotations;
+import io.modelcontextprotocol.spec.McpSchema.Group;
 import net.javacrumbs.jsonunit.core.Option;
 import reactor.core.publisher.Mono;
 
@@ -551,6 +554,44 @@ public class SyncMcpToolProviderTests {
 		assertThat(annotations.destructiveHint()).isFalse();
 		assertThat(annotations.idempotentHint()).isTrue();
 		assertThat(annotations.openWorldHint()).isFalse();
+	}
+
+	@Test
+	void testToolWithToolGroup() throws Exception {
+		@McpToolGroup(description = "my description")
+		class AnnotatedTool {
+
+			@McpTool(name = "annotated-tool", description = "Tool with annotations",
+					annotations = @McpTool.McpAnnotations(title = "Annotated Tool", readOnlyHint = true,
+							destructiveHint = false, idempotentHint = true, openWorldHint = false))
+			public String annotatedTool(String input) {
+				return "Annotated: " + input;
+			}
+
+		}
+
+		AnnotatedTool toolObject = new AnnotatedTool();
+		AnnotatedTool toolObject1 = new AnnotatedTool();
+
+		SyncMcpToolProvider provider = new SyncMcpToolProvider(List.of(toolObject, toolObject1));
+
+		List<SyncToolSpecification> toolSpecs = provider.getToolSpecifications();
+
+		assertThat(toolSpecs).hasSize(2);
+		SyncToolSpecification toolSpec = toolSpecs.get(0);
+		SyncToolSpecification toolSpec1 = toolSpecs.get(1);
+
+		Group toolGroup = toolSpec.tool().groups().get(0);
+
+		McpJsonMapper mapper = McpJsonMapper.getDefault();
+		McpSchema.Tool[] tools = new McpSchema.Tool[2];
+		tools[0] = toolSpec.tool();
+		tools[1] = toolSpec1.tool();
+
+		String serializedTools = mapper.writeValueAsString(tools);
+
+		McpSchema.Tool[] deserializedTools = mapper.readValue(serializedTools, McpSchema.Tool[].class);
+		System.out.println("");
 	}
 
 	@Test

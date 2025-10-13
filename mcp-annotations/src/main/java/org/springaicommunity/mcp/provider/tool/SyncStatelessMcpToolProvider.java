@@ -129,7 +129,7 @@ public class SyncStatelessMcpToolProvider extends AbstractMcpToolProvider {
 					Class<?> clazz = toolObject.getClass();
 					McpToolGroup toolGroupAnnotation = doGetMcpToolGroupAnnotation(clazz);
 					if (toolGroupAnnotation != null) {
-						toolBuilder.group(doGetToolGroup(toolGroupAnnotation, toolObject.getClass()));
+						toolBuilder.groups(List.of(doGetToolGroup(toolGroupAnnotation, toolObject.getClass())));
 					}
 
 					var tool = toolBuilder.build();
